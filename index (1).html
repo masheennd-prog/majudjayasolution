@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Faktur Penjualan - Maju Djaya Solution</title>
+<style id="pg"></style>
+<style>
+:root{--bg:#f2f4f8;--card:#fff;--ink:#12203a;--mut:#667085;--line:#d8dde6;--ac:#1d4ed8;--soft:#e8eefc;--red:#b42318}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:15px/1.45 system-ui,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--ink);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+header b{font-size:18px}header small{color:#b9c4dd}
+nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center}
+nav button{background:transparent;color:#dbe4f8;border:1px solid #3b4d73;padding:7px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on{background:#fff;color:var(--ink);border-color:#fff}
+nav label{color:#b9c4dd;font-size:13px}
+nav select{padding:6px;border-radius:6px;border:0;font:inherit}
+main{max-width:1000px;margin:16px auto;padding:0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px}
+h3{margin:0 0 12px;font-size:16px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:13px;color:var(--mut)}
+input,textarea,select{font:inherit;color:var(--ink);padding:8px;border:1px solid var(--line);border-radius:6px;width:100%;background:#fff}
+input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.sc{overflow-x:auto}
+table.i{width:100%;border-collapse:collapse;min-width:720px}
+table.i th{font-size:12px;color:var(--mut);text-align:left;padding:4px}
+table.i td{padding:3px}
+td.r,th.r{text-align:right}
+.tot{margin-left:auto;max-width:320px;margin-top:12px}
+.tot div{display:flex;justify-content:space-between;padding:3px 0}
+.tot .b{font-weight:700;font-size:18px;border-top:2px solid var(--ink);margin-top:4px;padding-top:6px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{background:var(--ac);color:#fff;border:0;padding:10px 16px;border-radius:6px;cursor:pointer;font:inherit}
+.btn.o{background:#fff;color:var(--ac);border:1px solid var(--ac)}
+.btn.d{background:#fff;color:var(--red);border:1px solid var(--red)}
+.btn.s{padding:5px 9px;font-size:13px}
+.x{border:0;background:none;color:var(--red);font-size:20px;cursor:pointer}
+.mut{color:var(--mut);font-size:13px}
+table.h{width:100%;border-collapse:collapse}
+table.h th,table.h td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+table.h th{font-size:12px;color:var(--mut)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px}
+
+.modal{position:fixed;inset:0;background:rgba(18,32,58,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal .box{background:#fff;border-radius:10px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.box.wide{max-width:920px;height:min(680px,92vh);display:grid;grid-template-columns:1fr 330px;overflow:hidden}
+.pv{background:#dadce0;overflow:auto;padding:16px;display:flex;justify-content:center;align-items:flex-start}
+.pvh{flex:none}
+.pg{background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.35);transform-origin:top left;overflow:hidden}
+.st{padding:20px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+.st h3{margin:0}
+.st details{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:10px 0}
+.st summary{cursor:pointer;font-weight:600}
+.st details .f{margin-top:10px}
+.login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.login .box{max-width:360px;padding:24px;display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;width:100%}
+.login h3{margin:0}
+.err{color:var(--red);margin:0;font-size:13px}
+.warn{background:#fff4e5;border:1px solid #f5c26b;color:#7a4b00;padding:10px 14px;border-radius:8px;margin-bottom:14px}
+body.lock header,body.lock main{display:none}
+@media(max-width:760px){.box.wide{display:block;overflow:auto}.pv{height:320px}}
+.cp{break-after:page}.cp:last-child{break-after:auto}
+
+/* ===== Cetak ===== */
+#print{display:none}
+.nota{font:12px/1.4 Arial,sans-serif;color:#000}
+.nota .nh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.nota h2{margin:0;font-size:18px}
+.nota h1{margin:0;font-size:24px;font-weight:400}
+.nota table{width:100%;border-collapse:collapse}
+.nota .inf td{padding:1px 4px}
+.nota .it{margin-top:6px;border-top:1px solid #000;border-bottom:1px solid #000}
+.nota .it th{text-align:left;font-weight:400;padding:3px 4px;border-bottom:1px solid #000}
+.nota .it td{padding:3px 4px;vertical-align:top}
+.nota .r{text-align:right}
+.nota .nf{display:flex;justify-content:space-between;gap:20px;margin-top:8px}
+.nota .tt{width:240px}.nota .tt td{padding:1px 4px;text-align:right}
+.nota .sg{display:flex;gap:20px;margin-top:14px;align-items:flex-end}
+.nota .sg>div{flex:1;text-align:center}
+.nota .sg .ln{margin-top:34px;border-top:1px dashed #000}
+.nota .gr{flex:1.6!important;border:1px solid #000;padding:4px 6px;text-align:left!important}
+.th{margin:0 auto;font:11px/1.35 Arial,sans-serif;color:#000;padding:3mm 0 6mm}
+.t80{width:72mm}.t58{width:48mm;font-size:10px}
+.th hr{border:0;border-top:1px dashed #000;margin:4px 0}
+.th .c{text-align:center}.th .sn{font-size:14px}
+.th .rw{display:flex;justify-content:space-between;gap:6px}
+.th .b{font-weight:700;font-size:1.15em}
+@media print{body{background:#fff}header,main,.toast,.modal,.login{display:none!important}#print{display:block}}
+</style>
+</head>
+<body class="lock">
+<header>
+  <div><b>Maju Djaya Solution</b><br><small>Aplikasi faktur penjualan</small></div>
+  <nav>
+    <button data-t="baru" class="on">Faktur baru</button>
+    <button data-t="riwayat">Riwayat</button>
+    <button data-t="set">Pengaturan</button>
+    <button id="out">Keluar</button>
+  </nav>
+</header>
+
+<main>
+<div class="warn" id="warn" hidden>Password masih bawaan (admin / admin123). Segera ganti di Pengaturan &gt; Akun admin.</div>
+<section id="t-baru">
+  <div class="card">
+    <h3>Data faktur</h3>
+    <div class="g">
+      <label class="f">No. faktur<input data-f="no"></label>
+      <label class="f">Tanggal<input type="date" data-f="tgl"></label>
+      <label class="f">Sales<input data-f="sales"></label>
+      <label class="f">Nama pelanggan<input data-f="nama"></label>
+      <label class="f">Telp.<input data-f="telp"></label>
+      <label class="f">Alamat<input data-f="alamat"></label>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Barang / jasa</h3>
+    <div class="sc"><table class="i">
+      <thead><tr><th>Kode</th><th style="width:34%">Nama barang</th><th>Qty</th><th>Sat.</th><th>Harga</th><th>Disc (Rp)</th><th class="r">Jumlah</th><th></th></tr></thead>
+      <tbody id="items"></tbody>
+    </table></div>
+    <div class="bar"><button class="btn o s" id="add">+ Tambah baris</button></div>
+    <div class="tot">
+      <div><span>Sub total</span><b id="sub">0</b></div>
+      <div><span>Diskon (Rp)</span><input data-f="diskon" type="number" min="0" style="width:130px;text-align:right"></div>
+      <div><span>Ongkos kirim</span><input data-f="ongkir" type="number" min="0" style="width:130px;text-align:right"></div>
+      <div class="b"><span>Total faktur</span><span id="tot">0</span></div>
+    </div>
+    <p class="mut" id="terb"></p>
+    <label class="f">Keterangan<textarea rows="2" data-f="ket"></textarea></label>
+    <div class="bar">
+      <button class="btn" id="save">Simpan</button>
+      <button class="btn" id="savep">Simpan &amp; cetak</button>
+      <button class="btn d" id="reset">Kosongkan</button>
+    </div>
+  </div>
+</section>
+
+<section id="t-riwayat" hidden>
+  <div class="card">
+    <h3>Riwayat penjualan</h3>
+    <div class="g"><input id="q" placeholder="Cari no. faktur, pelanggan, atau barang"></div>
+    <p class="mut" id="ring"></p>
+    <div class="sc"><table class="h"><thead><tr><th>No. faktur</th><th>Tanggal</th><th>Pelanggan</th><th>Total</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+    <div class="bar">
+      <button class="btn o s" id="csv">Ekspor CSV</button>
+      <button class="btn o s" id="bak">Cadangkan (JSON)</button>
+      <button class="btn o s" id="imp">Pulihkan dari JSON</button>
+      <input type="file" id="file" accept=".json" hidden>
+    </div>
+  </div>
+</section>
+
+<section id="t-set" hidden>
+  <div class="card">
+    <h3>Identitas usaha di faktur</h3>
+    <div class="g">
+      <label class="f">Nama usaha<input data-s="nama"></label>
+      <label class="f">Layanan (baris di bawah nama)<input data-s="tag"></label>
+      <label class="f">Alamat<input data-s="alamat"></label>
+      <label class="f">No. WA<input data-s="wa"></label>
+      <label class="f">Awalan no. faktur<input data-s="prefix"></label>
+      <label class="f">Nomor berikutnya<input type="number" data-s="next" min="1"></label>
+      <label class="f">Sales bawaan<input data-s="sales"></label>
+      <label class="f">Teks garansi<input data-s="garansi"></label>
+      <label class="f">Ucapan di struk<input data-s="footer"></label>
+    </div>
+    <div class="bar"><button class="btn" id="saveset">Simpan pengaturan</button></div>
+  </div>
+  <div class="card">
+    <h3>Akun admin</h3>
+    <div class="g">
+      <label class="f">Username<input id="au" autocomplete="username"></label>
+      <label class="f">Password saat ini<input id="ao" type="password" autocomplete="current-password"></label>
+      <label class="f">Password baru (kosongkan jika tidak diganti)<input id="an" type="password" autocomplete="new-password"></label>
+      <label class="f">Ulangi password baru<input id="ar" type="password" autocomplete="new-password"></label>
+    </div>
+    <div class="bar"><button class="btn" id="acc">Simpan akun</button></div>
+  </div>
+</section>
+</main>
+<div class="login" id="login" hidden>
+  <form class="box" id="lf">
+    <h3>Masuk</h3>
+    <div class="mut">Maju Djaya Solution - Faktur Penjualan</div>
+    <label class="f">Username<input id="lu" autocomplete="username" required></label>
+    <label class="f">Password<input id="lp" type="password" autocomplete="current-password" required></label>
+    <p class="err" id="le" hidden></p>
+    <button class="btn" type="submit">Masuk</button>
+  </form>
+</div>
+<div class="modal" id="dlg" hidden>
+  <div class="box wide" role="dialog" aria-modal="true" aria-labelledby="dt">
+    <div class="pv" id="pv"><div class="pvh" id="pvh"><div class="pg" id="pvp"></div></div></div>
+    <div class="st">
+      <h3 id="dt">Cetak</h3>
+      <div class="mut" id="dinfo"></div>
+      <label class="f">Kertas<select id="pk">
+        <option value="letter">Letter (215,9 x 279,4 mm)</option>
+        <option value="80">Struk 80mm</option>
+        <option value="58">Struk 58mm</option>
+      </select></label>
+      <label class="f">Tata letak<select id="po"><option value="portrait">Potret</option><option value="landscape">Lanskap</option></select></label>
+      <label class="f">Salinan<input id="pn" type="number" min="1" max="20"></label>
+      <details><summary>Setelan lain</summary>
+        <label class="f">Skala (%)<input id="ps" type="number" min="50" max="150" step="5"></label>
+        <label class="f">Margin<select id="pm"><option value="12">Standar</option><option value="6">Sempit</option><option value="0">Tidak ada</option></select></label>
+      </details>
+      <p class="mut">Printer dipilih di jendela cetak browser setelah Anda klik Cetak. Untuk struk, atur Margins: None dan Scale: 100% di jendela itu.</p>
+      <div class="bar" style="margin-top:auto"><button class="btn o" id="dno">Batal</button><button class="btn" id="dgo">Cetak</button></div>
+    </div>
+  </div>
+</div>
+<div id="print"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const rp=n=>new Intl.NumberFormat('id-ID').format(Math.round(+n||0));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LS={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{toast('Gagal menyimpan: penyimpanan browser penuh/diblokir')}}};
+const fd=t=>t?new Date(t+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}):'';
+const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200)}
+
+const OLDTAG='Service Laptop/PC - Printer - Jaringan - POS System';
+let cfg={nama:'Maju Djaya Solution',tag:'Service Laptop/PC - Printer - CCTV - Jaringan - POS System',alamat:'',wa:'0851-5655-1433',prefix:'MDS-',next:1,sales:'',garansi:'Garansi tidak berlaku apabila tidak ada nota beli.',footer:'Terima kasih atas kepercayaan Anda',...LS.get('mds_cfg',{})};
+if(cfg.tag===OLDTAG){cfg.tag='Service Laptop/PC - Printer - CCTV - Jaringan - POS System';LS.set('mds_cfg',cfg)}
+let data=LS.get('mds_inv',[]);
+let cur;
+
+/* ---------- Hitung ---------- */
+const line=it=>Math.max(0,(+it.qty||0)*(+it.harga||0)-(+it.disc||0));
+const sub=v=>v.items.reduce((a,it)=>a+line(it),0);
+const tot=v=>Math.max(0,sub(v)-(+v.diskon||0)+(+v.ongkir||0));
+function tb(n){const s=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];n=Math.floor(n);
+ if(n<12)return s[n];if(n<20)return tb(n-10)+' belas';
+ if(n<100)return tb(Math.floor(n/10))+' puluh'+(n%10?' '+tb(n%10):'');
+ if(n<200)return 'seratus'+(n%100?' '+tb(n%100):'');
+ if(n<1e3)return tb(Math.floor(n/100))+' ratus'+(n%100?' '+tb(n%100):'');
+ if(n<2e3)return 'seribu'+(n%1e3?' '+tb(n%1e3):'');
+ if(n<1e6)return tb(Math.floor(n/1e3))+' ribu'+(n%1e3?' '+tb(n%1e3):'');
+ if(n<1e9)return tb(Math.floor(n/1e6))+' juta'+(n%1e6?' '+tb(n%1e6):'');
+ if(n<1e12)return tb(Math.floor(n/1e9))+' miliar'+(n%1e9?' '+tb(n%1e9):'');
+ return tb(Math.floor(n/1e12))+' triliun'+(n%1e12?' '+tb(n%1e12):'')}
+const terb=n=>{if(n<=0)return 'Nol';const t=tb(n);return t[0].toUpperCase()+t.slice(1)};
+
+/* ---------- Form ---------- */
+const blank=()=>({kode:'',nama:'',qty:1,sat:'UNT',harga:0,disc:0});
+const pad=n=>String(n).padStart(5,'0');
+function newInv(){return {id:null,no:cfg.prefix+pad(cfg.next),tgl:today(),sales:cfg.sales,nama:'',telp:'',alamat:'',diskon:0,ongkir:0,ket:'',items:[blank()]}}
+function fill(){$$('[data-f]').forEach(e=>e.value=cur[e.dataset.f]??'');rows()}
+function rows(){
+ $('#items').innerHTML=cur.items.map((it,i)=>`<tr data-i="${i}">
+ <td><input data-k="kode" value="${esc(it.kode)}"></td>
+ <td><input data-k="nama" value="${esc(it.nama)}"></td>
+ <td><input data-k="qty" type="number" min="0" value="${it.qty}" style="width:70px"></td>
+ <td><input data-k="sat" value="${esc(it.sat)}" style="width:70px"></td>
+ <td><input data-k="harga" type="number" min="0" value="${it.harga}" style="width:120px"></td>
+ <td><input data-k="disc" type="number" min="0" value="${it.disc}" style="width:100px"></td>
+ <td class="r">${rp(line(it))}</td>
+ <td><button class="x" data-del="${i}" title="Hapus baris">×</button></td></tr>`).join('');
+ calc()}
+function calc(){$('#sub').textContent=rp(sub(cur));$('#tot').textContent=rp(tot(cur));$('#terb').textContent='Terbilang: '+terb(tot(cur))+' rupiah'}
+$('#items').addEventListener('input',e=>{const tr=e.target.closest('tr'),k=e.target.dataset.k;if(!k)return;
+ const it=cur.items[tr.dataset.i];it[k]=['qty','harga','disc'].includes(k)?(+e.target.value||0):e.target.value;
+ tr.querySelector('td.r').textContent=rp(line(it));calc()});
+$('#items').addEventListener('click',e=>{const d=e.target.dataset.del;if(d==null)return;
+ cur.items.splice(d,1);if(!cur.items.length)cur.items.push(blank());rows()});
+$$('[data-f]').forEach(e=>e.addEventListener('input',()=>{cur[e.dataset.f]=['diskon','ongkir'].includes(e.dataset.f)?(+e.value||0):e.value;calc()}));
+$('#add').onclick=()=>{cur.items.push(blank());rows();$('#items tr:last-child input').focus()};
+$('#reset').onclick=()=>{cur=newInv();fill()};
+
+function save(){
+ cur.items=cur.items.filter(it=>it.nama.trim()||it.kode.trim()||it.harga>0);
+ if(!cur.items.length){cur.items=[blank()];rows();toast('Isi minimal satu barang');return null}
+ if(!cur.no.trim()){toast('No. faktur wajib diisi');return null}
+ if(data.some(d=>d.no===cur.no&&d.id!==cur.id)){toast('No. faktur sudah dipakai');return null}
+ const v=JSON.parse(JSON.stringify(cur));
+ if(v.id){data=data.map(d=>d.id===v.id?v:d)}else{v.id=Date.now();data.push(v);cfg.next++;LS.set('mds_cfg',cfg)}
+ LS.set('mds_inv',data);toast('Faktur '+v.no+' tersimpan');
+ cur=newInv();fill();return v}
+$('#save').onclick=save;
+$('#savep').onclick=()=>{const v=save();if(v)doPrint(v)};
+
+/* ---------- Riwayat ---------- */
+function hist(){
+ const q=$('#q').value.toLowerCase();
+ const L=[...data].sort((a,b)=>b.tgl.localeCompare(a.tgl)||b.id-a.id).filter(v=>!q||(v.no+' '+v.nama+' '+v.items.map(i=>i.nama+' '+i.kode).join(' ')).toLowerCase().includes(q));
+ $('#ring').textContent=L.length+' faktur, total Rp '+rp(L.reduce((a,v)=>a+tot(v),0));
+ $('#hist').innerHTML=L.length?L.map(v=>`<tr><td>${esc(v.no)}</td><td>${fd(v.tgl)}</td><td>${esc(v.nama)||'-'}</td><td>Rp ${rp(tot(v))}</td>
+ <td style="white-space:nowrap"><button class="btn s" data-a="p" data-id="${v.id}">Cetak</button>
+ <button class="btn o s" data-a="e" data-id="${v.id}">Ubah</button>
+ <button class="btn d s" data-a="d" data-id="${v.id}">Hapus</button></td></tr>`).join(''):'<tr><td colspan="5" class="mut">Belum ada faktur. Buat faktur pertama di tab "Faktur baru".</td></tr>'}
+$('#q').oninput=hist;
+$('#hist').onclick=e=>{const a=e.target.dataset.a;if(!a)return;const v=data.find(x=>x.id==e.target.dataset.id);if(!v)return;
+ if(a==='p')doPrint(v);
+ if(a==='e'){cur=JSON.parse(JSON.stringify(v));fill();tab('baru');toast('Mengubah faktur '+v.no)}
+ if(a==='d'&&confirm('Hapus faktur '+v.no+'?')){data=data.filter(x=>x.id!==v.id);LS.set('mds_inv',data);hist()}};
+function dl(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+$('#csv').onclick=()=>{const c=x=>'"'+String(x??'').replace(/"/g,'""')+'"';
+ const r=[['No','Tanggal','Pelanggan','Kode','Barang','Qty','Harga','Disc','Jumlah']];
+ data.forEach(v=>v.items.forEach(i=>r.push([v.no,v.tgl,v.nama,i.kode,i.nama,i.qty,i.harga,i.disc,line(i)])));
+ dl('riwayat-penjualan.csv','\ufeff'+r.map(x=>x.map(c).join(',')).join('\n'),'text/csv')};
+$('#bak').onclick=()=>dl('cadangan-faktur-'+today()+'.json',JSON.stringify({cfg,data}),'application/json');
+$('#imp').onclick=()=>$('#file').click();
+$('#file').onchange=async e=>{try{const j=JSON.parse(await e.target.files[0].text());
+ const ids=new Set(data.map(d=>d.id));(j.data||[]).forEach(v=>{if(!ids.has(v.id))data.push(v)});
+ if(j.cfg)cfg={...cfg,...j.cfg,next:Math.max(cfg.next,j.cfg.next||1)};
+ LS.set('mds_inv',data);LS.set('mds_cfg',cfg);hist();toast('Data dipulihkan')}catch{toast('File tidak valid')}e.target.value=''};
+
+/* ---------- Pengaturan ---------- */
+function setFill(){$$('[data-s]').forEach(e=>e.value=cfg[e.dataset.s]??'')}
+$('#saveset').onclick=()=>{$$('[data-s]').forEach(e=>cfg[e.dataset.s]=e.dataset.s==='next'?(+e.value||1):e.value);LS.set('mds_cfg',cfg);
+ if(!cur.id){cur.no=cfg.prefix+pad(cfg.next);cur.sales=cfg.sales;fill()}toast('Pengaturan tersimpan')};
+
+/* ---------- Tab ---------- */
+function tab(t){$$('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+ ['baru','riwayat','set'].forEach(k=>$('#t-'+k).hidden=k!==t);if(t==='riwayat')hist()}
+$$('nav button[data-t]').forEach(b=>b.onclick=()=>tab(b.dataset.t));
+
+/* ---------- Cetak ---------- */
+function nota(v){return `<div class="nota">
+<div class="nh"><div><h2>${esc(cfg.nama)}</h2><div>${esc(cfg.tag)}</div>${cfg.alamat?`<div>${esc(cfg.alamat)}</div>`:''}${cfg.wa?`<div>WA: ${esc(cfg.wa)}</div>`:''}</div><h1>NOTA PENJUALAN</h1></div>
+<table class="inf">
+<tr><td>No. Faktur</td><td>: ${esc(v.no)}</td><td>Nama</td><td>: ${esc(v.nama)}</td></tr>
+<tr><td>Tanggal</td><td>: ${fd(v.tgl)}</td><td>Telp.</td><td>: ${esc(v.telp)}</td></tr>
+<tr><td>Sales</td><td>: ${esc(v.sales)}</td><td>Alamat</td><td>: ${esc(v.alamat)}</td></tr></table>
+<table class="it"><thead><tr><th>No.</th><th>Kode Barang</th><th>Nama Barang</th><th>Qty</th><th class="r">Harga</th><th class="r">Disc</th><th class="r">Jumlah</th></tr></thead><tbody>
+${v.items.map((it,i)=>`<tr><td>${i+1}.</td><td>${esc(it.kode)}</td><td>${esc(it.nama)}</td><td>${it.qty} ${esc(it.sat)}</td><td class="r">${rp(it.harga)}</td><td class="r">${rp(it.disc)}</td><td class="r">${rp(line(it))}</td></tr>`).join('')}</tbody></table>
+<div class="nf"><div><div>Terbilang : ${terb(tot(v))}</div><div>Keterangan : ${esc(v.ket)}</div></div>
+<table class="tt"><tr><td>Sub Total : Rp</td><td>${rp(sub(v))}</td></tr><tr><td>Discount : Rp</td><td>${rp(v.diskon)}</td></tr><tr><td>Ongkos Kirim : Rp</td><td>${rp(v.ongkir)}</td></tr><tr><td><b>Total Faktur : Rp</b></td><td><b>${rp(tot(v))}</b></td></tr></table></div>
+<div class="sg"><div>Diterima oleh,<div class="ln"></div></div><div>Disiapkan oleh,<div class="ln"></div></div><div>Hormat kami,<div class="ln">${esc(v.sales)}</div></div><div class="gr">${esc(cfg.garansi)}</div></div></div>`}
+
+function struk(v,p){const R=(a,b,c='')=>`<div class="rw ${c}"><span>${a}</span><span>${b}</span></div>`;
+ return `<div class="th t${p}"><div class="c"><b class="sn">${esc(cfg.nama)}</b><div>${esc(cfg.tag)}</div>${cfg.alamat?`<div>${esc(cfg.alamat)}</div>`:''}${cfg.wa?`<div>WA: ${esc(cfg.wa)}</div>`:''}</div><hr>
+<div>No   : ${esc(v.no)}</div><div>Tgl  : ${fd(v.tgl)}</div>${v.sales?`<div>Sales: ${esc(v.sales)}</div>`:''}${v.nama?`<div>Plg  : ${esc(v.nama)}</div>`:''}${v.telp?`<div>Telp : ${esc(v.telp)}</div>`:''}<hr>
+${v.items.map(it=>`<div>${esc(it.nama||it.kode)}</div>`+R(`${it.qty} ${esc(it.sat)} x ${rp(it.harga)}${it.disc?` (-${rp(it.disc)})`:''}`,rp(line(it)))).join('')}<hr>
+${R('Sub Total',rp(sub(v)))}${v.diskon?R('Diskon','-'+rp(v.diskon)):''}${v.ongkir?R('Ongkos Kirim',rp(v.ongkir)):''}${R('TOTAL',rp(tot(v)),'b')}<hr>
+<div>Terbilang: ${terb(tot(v))} rupiah</div>${v.ket?`<div>Ket: ${esc(v.ket)}</div>`:''}<hr>
+<div class="c">${esc(cfg.garansi)}<br>${esc(cfg.footer)}</div></div>`}
+
+const sheet=(v,o)=>{const h=o.p==='letter'?nota(v):struk(v,o.p);return Array.from({length:o.n},()=>`<div class="cp" style="zoom:${o.s/100}">${h}</div>`).join('')};
+let pend=null;
+const opts=()=>({p:$('#pk').value,o:$('#po').value,n:Math.max(1,Math.min(20,+$('#pn').value||1)),s:Math.max(50,Math.min(150,+$('#ps').value||100)),m:+$('#pm').value});
+function fit(){const pg=$('#pvp'),h=$('#pvh');pg.style.transform='none';
+ const k=Math.min(1,($('#pv').clientWidth-32)/pg.offsetWidth);
+ pg.style.transform=`scale(${k})`;h.style.width=pg.offsetWidth*k+'px';h.style.height=pg.offsetHeight*k+'px'}
+function preview(){const o=opts(),th=o.p!=='letter',pg=$('#pvp');
+ $('#po').disabled=$('#pm').disabled=th;$('#ps').max=th?100:150;
+ if(th&&o.s>100){$('#ps').value=100;o.s=100}
+ if(th){pg.style.width=o.p+'mm';pg.style.minHeight='70mm';pg.style.padding='0'}
+ else{const l=o.o==='landscape';pg.style.width=(l?279.4:215.9)+'mm';pg.style.minHeight=(l?215.9:279.4)+'mm';pg.style.padding=o.m+'mm'}
+ pg.innerHTML=sheet(pend,{...o,n:1});
+ $('#dinfo').textContent='Faktur '+pend.no+' - Rp '+rp(tot(pend))+(o.n>1?' - '+o.n+' salinan':'');
+ fit()}
+function doPrint(v){pend=v;
+ const o={p:'letter',o:'portrait',n:1,s:100,m:12,...LS.get('mds_pr',{})};
+ $('#pk').value=o.p;$('#po').value=o.o;$('#pn').value=o.n;$('#ps').value=o.s;$('#pm').value=o.m;
+ $('#dlg').hidden=false;preview();$('#dgo').focus()}
+function closeDlg(){$('#dlg').hidden=true}
+['pk','po','pn','ps','pm'].forEach(id=>$('#'+id).addEventListener('input',preview));
+window.addEventListener('resize',()=>{if(!$('#dlg').hidden)fit()});
+$('#dno').onclick=closeDlg;
+$('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')closeDlg()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#dlg').hidden)closeDlg()});
+$('#dgo').onclick=()=>{const o=opts();LS.set('mds_pr',o);closeDlg();
+ $('#print').innerHTML=sheet(pend,o);
+ $('#pg').textContent=o.p==='letter'?`@page{size:letter ${o.o};margin:${o.m}mm}`:`@page{size:${o.p}mm auto;margin:0}`;
+ setTimeout(()=>window.print(),80)};
+
+cur=newInv();fill();setFill();
+
+/* ---------- Login admin ---------- */
+async function hash(pw,salt){const t=salt+'|'+pw;
+ if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+ let a=0xdeadbeef,b=0x41c6ce57;for(let i=0;i<t.length;i++){const c=t.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677)}
+ a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);
+ return 'f'+(4294967296*(2097151&b)+(a>>>0)).toString(16)}
+let auth;
+async function initAuth(){auth=LS.get('mds_auth',null);
+ if(!auth||!auth.h){const salt=Math.random().toString(36).slice(2)+Date.now().toString(36);
+  auth={u:'admin',salt,h:await hash('admin123',salt),def:true};LS.set('mds_auth',auth)}}
+function unlock(){document.body.classList.remove('lock');$('#login').hidden=true;$('#warn').hidden=!auth.def;$('#au').value=auth.u}
+function showLogin(){document.body.classList.add('lock');$('#login').hidden=false;$('#lu').focus()}
+$('#lf').addEventListener('submit',async e=>{e.preventDefault();
+ const ok=$('#lu').value.trim().toLowerCase()===auth.u.toLowerCase()&&await hash($('#lp').value,auth.salt)===auth.h;
+ if(ok){sessionStorage.setItem('mds_ok','1');$('#lp').value='';$('#le').hidden=true;unlock()}
+ else{await new Promise(r=>setTimeout(r,700));$('#le').hidden=false;$('#le').textContent='Username atau password salah.';$('#lp').select()}});
+$('#out').onclick=()=>{sessionStorage.removeItem('mds_ok');tab('baru');showLogin()};
+$('#acc').onclick=async()=>{const u=$('#au').value.trim(),o=$('#ao').value,n=$('#an').value,r=$('#ar').value;
+ if(await hash(o,auth.salt)!==auth.h)return toast('Password saat ini salah');
+ if(u.length<3)return toast('Username minimal 3 karakter');
+ if(n&&n.length<6)return toast('Password baru minimal 6 karakter');
+ if(n!==r)return toast('Ulangi password baru dengan benar');
+ auth.u=u;if(n){auth.h=await hash(n,auth.salt);auth.def=false}
+ LS.set('mds_auth',auth);['ao','an','ar'].forEach(i=>$('#'+i).value='');$('#warn').hidden=!auth.def;toast('Akun admin diperbarui')};
+initAuth().then(()=>sessionStorage.getItem('mds_ok')==='1'?unlock():showLogin());
+</script>
+</body>
+</html>
